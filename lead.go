@@ -101,6 +101,26 @@ func (c *Closeio) GetLead(id string) (l *LeadResp, err error) {
 	}
 	return &lead, nil
 }
+
+func (c *Closeio) UpdateLead(id string, lead *map[string]string) (l *LeadResp, err error) {
+	data, err := marshal(lead)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := request("lead/"+id+"/", "PUT", c.Token, data)
+	if err != nil {
+		return nil, err
+	}
+	lr := LeadResp{}
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&lr)
+
+	if err != nil {
+	  return nil, err;
+	}
+	return &lr, nil
+}
+
 func (c *Closeio) DeleteLead(id string) error {
 	_, err := request("lead/"+id+"/", "DELETE", c.Token, nil)
 	if err != nil {
